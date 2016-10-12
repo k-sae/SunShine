@@ -1,17 +1,22 @@
 package com.example.kemo.sunshine.app;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.*;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,11 +28,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//visual CV
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
+ * {@link ForecastFragment}
  */
+
 public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
@@ -44,7 +51,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
-
+       // inflater.inflate(R.menu.detail, menu);
         ///seems that there implementation better than mine
        
         /* MenuItem item = menu.getItem(0);
@@ -67,31 +74,43 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
             FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = preferences.getString(getString(R.string.pref_location_key)
+                    ,getString(R.string.pref_location_default));
             //cairo id at http://openweathermap.org/help/city_list.txt
-            fetchWeatherTask.execute("360630");
+            fetchWeatherTask.execute(location);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private ArrayAdapter<String> foreCastEntry = null;
+    private ArrayAdapter<String> forcastAdabter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.forecast_fragment, container, false);
-        foreCastEntry = new ArrayAdapter<String>(
+        final View view = inflater.inflate(R.layout.fragment_forcast, container, false);
+        forcastAdabter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textView,
                 createForecastEntry()
         );
         ListView listView = (ListView) view.findViewById(R.id.listView_forecast);
-        listView.setAdapter(foreCastEntry);
-        //this not working
-        //return inflater.inflate(R.layout.forecast_fragment, container, false);
-        //while this working
+        listView.setAdapter(forcastAdabter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String forecast = forcastAdabter.getItem(i);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(intent);
+
+            }
+        });
         return view;
     }
 
@@ -309,11 +328,11 @@ public class ForecastFragment extends Fragment {
         protected void onPostExecute(String[] days) {
             super.onPostExecute(days);
             if (days == null) return;
-           foreCastEntry.clear();
+           forcastAdabter.clear();
             for (String day : days
                     ) {
 
-               foreCastEntry.add(day);
+               forcastAdabter.add(day);
             }
 
         }
