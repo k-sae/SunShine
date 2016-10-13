@@ -34,13 +34,32 @@ import java.util.List;
  * Activities that contain this fragment must implement the
  * {@link ForecastFragment}
  */
-
+//TODO
+    //Load the weather from settings NOTE: use override onstart method
+    //create updateWeather method
+    // may need to remove fake data in oncreate view method
+    //pass empty array list to the adabter
+    //
 public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+    private void updateWeather()
+    {
+        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = preferences.getString(getString(R.string.pref_location_key)
+                ,getString(R.string.pref_location_default));
+        //cairo id at http://openweathermap.org/help/city_list.txt
+        fetchWeatherTask.execute(location);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,12 +92,7 @@ public class ForecastFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = preferences.getString(getString(R.string.pref_location_key)
-                    ,getString(R.string.pref_location_default));
-            //cairo id at http://openweathermap.org/help/city_list.txt
-            fetchWeatherTask.execute(location);
+            updateWeather();
             return true;
         }
 
