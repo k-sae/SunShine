@@ -6,9 +6,10 @@
                     android:singleLine="true"
                     android:inputType="text"
 />
-    <EditTextPreference android:title="@string/pref_TemperatureUnits_label"
-                        android:key="@string/pref_TemperatureUnits_key"
-                        android:defaultValue="@string/pref_TemperatureUnits_default"
-                        android:singleLine="true"
-                        android:inputType="text"/>
+    <ListPreference android:title="@string/pref_TemperatureUnits_label"
+                    android:key="@string/pref_TemperatureUnits_key"
+                    android:defaultValue="@string/pref_TemperatureUnits_metric"
+                    android:entryValues="@array/pref_units_values"
+                    android:entries="@array/pref_units_options"
+    />
 </PreferenceScreen>

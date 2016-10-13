@@ -260,9 +260,19 @@ public class ForecastFragment extends Fragment {
          */
         private String formatHighLows(double high, double low) {
             // For presentation, assume the user doesn't care about tenths of a degree.
+            //if (unitType.equals(R.string.))
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String value = preferences.getString(getString(R.string.pref_TemperatureUnits_key)
+                    , getString(R.string.pref_TemperatureUnits_metric));
+            if(value.equals(getString(R.string.pref_TemperatureUnits_imperials)))
+            {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            }
+            Log.e("tag",value + "\t" +  getString(R.string.pref_TemperatureUnits_imperials));
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
-
             String highLowStr = roundedHigh + "/" + roundedLow;
             return highLowStr;
         }
