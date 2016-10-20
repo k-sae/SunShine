@@ -270,7 +270,6 @@ public class ForecastFragment extends Fragment {
                 high = (high * 1.8) + 32;
                 low = (low * 1.8) + 32;
             }
-            Log.e("tag",value + "\t" +  getString(R.string.pref_TemperatureUnits_imperials));
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
             String highLowStr = roundedHigh + "/" + roundedLow;
